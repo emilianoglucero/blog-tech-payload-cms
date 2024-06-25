@@ -1,18 +1,14 @@
+import { HTMLConverterFeature, lexicalEditor, lexicalHTML } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload/types'
 
 import { admins } from '../../access/admins'
 import { adminsOrPublished } from '../../access/adminsOrPublished'
-import { Archive } from '../../blocks/ArchiveBlock'
-import { CallToAction } from '../../blocks/CallToAction'
-import { Content } from '../../blocks/Content'
-import { MediaBlock } from '../../blocks/MediaBlock'
-import { hero } from '../../fields/hero'
 import { slugField } from '../../fields/slug'
-import { populateArchiveBlock } from '../../hooks/populateArchiveBlock'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidatePost } from './hooks/revalidatePost'
 
+// ... existing code ...
 export const Posts: CollectionConfig = {
   slug: 'posts',
   admin: {
@@ -27,7 +23,8 @@ export const Posts: CollectionConfig = {
   hooks: {
     beforeChange: [populatePublishedAt],
     afterChange: [revalidatePost],
-    afterRead: [populateArchiveBlock, populateAuthors],
+    // afterRead: [populateArchiveBlock, populateAuthors],
+    afterRead: [populateAuthors],
   },
   versions: {
     drafts: true,
@@ -52,15 +49,18 @@ export const Posts: CollectionConfig = {
       name: 'dateToShow',
       type: 'text',
     },
-    // {
-    //   name: 'categories',
-    //   type: 'relationship',
-    //   relationTo: 'categories',
-    //   hasMany: true,
-    //   admin: {
-    //     position: 'sidebar',
-    //   },
-    // },
+    {
+      name: 'content',
+      type: 'richText',
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures,
+          // The HTMLConverter Feature is the feature which manages the HTML serializers.
+          // If you do not pass any arguments to it, it will use the default serializers.
+          HTMLConverterFeature({}),
+        ],
+      }),
+    },
     {
       name: 'publishedAt',
       type: 'date',
@@ -82,85 +82,16 @@ export const Posts: CollectionConfig = {
       },
     },
     // {
-    //   name: 'authors',
+    //   name: 'categories',
     //   type: 'relationship',
-    //   relationTo: 'users',
+    //   relationTo: 'categories',
     //   hasMany: true,
     //   admin: {
     //     position: 'sidebar',
     //   },
     // },
-    // This field is only used to populate the user data via the `populateAuthors` hook
-    // This is because the `user` collection has access control locked to protect user privacy
-    // GraphQL will also not return mutated user data that differs from the underlying schema
-    // {
-    //   name: 'populatedAuthors',
-    //   type: 'array',
-    //   admin: {
-    //     readOnly: true,
-    //     disabled: true,
-    //   },
-    //   access: {
-    //     update: () => false,
-    //   },
-    //   fields: [
-    //     {
-    //       name: 'id',
-    //       type: 'text',
-    //     },
-    //     {
-    //       name: 'name',
-    //       type: 'text',
-    //     },
-    //   ],
-    // },
-    {
-      type: 'tabs',
-      tabs: [
-        {
-          label: 'Hero',
-          fields: [hero],
-        },
-        {
-          label: 'Content',
-          fields: [
-            {
-              name: 'layout',
-              type: 'blocks',
-              required: false,
-              blocks: [CallToAction, Content, MediaBlock, Archive],
-            },
-            // {
-            //   name: 'enablePremiumContent',
-            //   label: 'Enable Premium Content',
-            //   type: 'checkbox',
-            // },
-            // {
-            //   name: 'premiumContent',
-            //   type: 'blocks',
-            //   access: {
-            //     read: ({ req }) => req.user,
-            //   },
-            //   blocks: [CallToAction, Content, MediaBlock, Archive],
-            // },
-          ],
-        },
-      ],
-    },
-    // {
-    //   name: 'relatedPosts',
-    //   type: 'relationship',
-    //   relationTo: 'posts',
-    //   hasMany: true,
-    //   filterOptions: ({ id }) => {
-    //     return {
-    //       id: {
-    //         not_in: [id],
-    //       },
-    //     }
-    //   },
-    // },
     slugField(),
+    lexicalHTML('content', { name: 'content_html' }),
   ],
   endpoints: [
     {
