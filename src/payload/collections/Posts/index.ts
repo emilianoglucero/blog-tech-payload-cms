@@ -50,6 +50,12 @@ export const Posts: CollectionConfig = {
       type: 'text',
     },
     {
+      name: 'relatedPosts',
+      type: 'relationship',
+      relationTo: 'posts',
+      hasMany: true,
+    },
+    {
       name: 'content',
       type: 'richText',
       editor: lexicalEditor({
@@ -81,15 +87,15 @@ export const Posts: CollectionConfig = {
         ],
       },
     },
-    // {
-    //   name: 'categories',
-    //   type: 'relationship',
-    //   relationTo: 'categories',
-    //   hasMany: true,
-    //   admin: {
-    //     position: 'sidebar',
-    //   },
-    // },
+    {
+      name: 'categories',
+      type: 'relationship',
+      relationTo: 'categories',
+      hasMany: true,
+      admin: {
+        position: 'sidebar',
+      },
+    },
     slugField(),
     lexicalHTML('content', { name: 'content_html' }),
   ],

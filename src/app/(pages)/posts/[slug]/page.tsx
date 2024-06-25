@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 
-import { Comment, Post } from '../../../../payload/payload-types'
+import type { Comment, Post } from '../../../../payload/payload-types'
 import { fetchComments } from '../../../_api/fetchComments'
 import { fetchDoc } from '../../../_api/fetchDoc'
 import { fetchDocs } from '../../../_api/fetchDocs'
@@ -39,13 +39,14 @@ export default async function Post({ params: { slug } }) {
     doc: post?.id,
   })
 
-  const { layout, relatedPosts, enablePremiumContent, premiumContent } = post
+  // const { layout, relatedPosts, enablePremiumContent, premiumContent } = post
+  const { relatedPosts } = post
 
   return (
     <React.Fragment>
       <PostHero post={post} />
-      <Blocks blocks={layout} />
-      {enablePremiumContent && <PremiumContent postSlug={slug as string} disableTopPadding />}
+      {/* <Blocks blocks={layout} /> */}
+      {/* {enablePremiumContent && <PremiumContent postSlug={slug as string} disableTopPadding />} */}
       <Blocks
         disableTopPadding
         blocks={[

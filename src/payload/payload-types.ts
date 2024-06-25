@@ -216,6 +216,7 @@ export interface Post {
   title: string;
   subtitle?: string | null;
   dateToShow?: string | null;
+  relatedPosts?: (string | Post)[] | null;
   content?: {
     root: {
       type: string;
@@ -232,6 +233,7 @@ export interface Post {
     [k: string]: unknown;
   } | null;
   publishedAt?: string | null;
+  categories?: (string | Category)[] | null;
   slug?: string | null;
   content_html?: string | null;
   meta?: {
