@@ -61,6 +61,11 @@ export const Posts: CollectionConfig = {
       editor: lexicalEditor({}),
     },
     {
+      name: 'playlist',
+      type: 'text',
+      required: false,
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       admin: {
